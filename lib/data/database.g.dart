@@ -81,7 +81,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Authentication` (`id` TEXT, `accessToken` TEXT, `idToken` TEXT, `expiredTimeInMilis` INTEGER, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Authentication` (`id` TEXT, `accessToken` TEXT, `idToken` TEXT, `refreshToken` TEXT, `expiredTimeInMilis` INTEGER, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -105,6 +105,7 @@ class _$AuthenticationRepository extends AuthenticationRepository {
                   'id': item.id,
                   'accessToken': item.accessToken,
                   'idToken': item.idToken,
+                  'refreshToken': item.refreshToken,
                   'expiredTimeInMilis': item.expiredTimeInMilis
                 }),
         _authenticationUpdateAdapter = UpdateAdapter(
@@ -115,6 +116,7 @@ class _$AuthenticationRepository extends AuthenticationRepository {
                   'id': item.id,
                   'accessToken': item.accessToken,
                   'idToken': item.idToken,
+                  'refreshToken': item.refreshToken,
                   'expiredTimeInMilis': item.expiredTimeInMilis
                 });
 
@@ -125,8 +127,12 @@ class _$AuthenticationRepository extends AuthenticationRepository {
   final QueryAdapter _queryAdapter;
 
   static final _authenticationMapper = (Map<String, dynamic> row) =>
-      Authentication(row['id'] as String, row['accessToken'] as String,
-          row['idToken'] as String, row['expiredTimeInMilis'] as int);
+      Authentication(
+          row['id'] as String,
+          row['accessToken'] as String,
+          row['idToken'] as String,
+          row['refreshToken'] as String,
+          row['expiredTimeInMilis'] as int);
 
   final InsertionAdapter<Authentication> _authenticationInsertionAdapter;
 

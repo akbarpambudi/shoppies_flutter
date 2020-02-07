@@ -15,6 +15,7 @@ class RemoteAuthenticationAdapter implements AuthenticationAdapter {
       response.accessToken = "xx-x-xx";
       response.expiredTime = DateTime.now();
       response.idToken = "xx-xx-xx";
+      response.refreshToken = "xx-xx-xx";
       return response;
     });
   }

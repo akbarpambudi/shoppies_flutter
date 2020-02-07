@@ -14,11 +14,13 @@ class SignedIn extends AuthenticationEvent {
   final String accessToken;
   final String idToken;
   final DateTime expiredTime;
+  final String refreshToken;
 
   SignedIn(
       {@required this.accessToken,
       @required this.idToken,
-      @required this.expiredTime});
+      @required this.expiredTime,
+      @required this.refreshToken});
 }
 
 class SignedOut extends AuthenticationEvent {}

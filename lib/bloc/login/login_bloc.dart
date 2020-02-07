@@ -36,7 +36,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       authenticationBloc.add(new SignedIn(
           accessToken: response.accessToken,
           idToken: response.idToken,
-          expiredTime: response.expiredTime));
+          expiredTime: response.expiredTime,
+          refreshToken: response.refreshToken));
       yield new LoginInitial();
     } on AuthenticationException catch (e) {
       yield new LoginFailure(exception: e);

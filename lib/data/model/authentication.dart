@@ -6,8 +6,9 @@ class Authentication {
   final String id;
   final String accessToken;
   final String idToken;
+  final String refreshToken;
   final int expiredTimeInMilis;
 
-  Authentication(
-      this.id, this.accessToken, this.idToken, this.expiredTimeInMilis);
+  Authentication(this.id, this.accessToken, this.idToken, this.refreshToken,
+      this.expiredTimeInMilis);
 }

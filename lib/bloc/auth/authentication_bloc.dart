@@ -35,8 +35,12 @@ class AuthenticationBloc
   Stream<AuthenticationState> _persistAuthenticationData(
       SignedIn event) async* {
     var auth = await this.repository.getAuthById(AUTHENTICATION_KEY);
-    var newAuth = new Authentication(AUTHENTICATION_KEY, event.accessToken,
-        event.idToken, event.expiredTime.millisecondsSinceEpoch);
+    var newAuth = new Authentication(
+        AUTHENTICATION_KEY,
+        event.accessToken,
+        event.idToken,
+        event.refreshToken,
+        event.expiredTime.millisecondsSinceEpoch);
     if (auth != null) {
       await this.repository.updateAuth(newAuth);
     } else {

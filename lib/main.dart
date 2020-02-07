@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shoppies/adapter/auth/authentication_adapter.dart';
 import 'package:shoppies/adapter/auth/remote_authentication_adapter.dart';
 import 'package:shoppies/bloc/auth/authentication_bloc.dart';
+import 'package:shoppies/bloc/bloc/oauth_bloc.dart';
+import 'package:shoppies/bloc/catalog/bloc.dart';
 import 'package:shoppies/bloc/login/bloc.dart';
 import 'package:shoppies/data/database.dart';
 import 'package:shoppies/data/repository/authentication_repository.dart';
@@ -26,10 +29,16 @@ void _setupLocator() async {
   appLocator.registerSingleton<LoginBloc>(new LoginBloc(
       authenticationAdapter: appLocator.get(),
       authenticationBloc: appLocator.get()));
+  appLocator.registerSingleton<CatalogBloc>(new CatalogBloc());
+  appLocator.registerSingleton<OauthBloc>(
+      new OauthBloc(authenticationBloc: appLocator.get()));
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   await _setupLocator();
   runApp(MultiBlocProvider(
     providers: [
@@ -39,6 +48,12 @@ void main() async {
       BlocProvider<LoginBloc>(
         create: (BuildContext context) => appLocator.get<LoginBloc>(),
       ),
+      BlocProvider<CatalogBloc>(
+        create: (BuildContext context) => appLocator.get<CatalogBloc>(),
+      ),
+      BlocProvider<OauthBloc>(
+        create: (BuildContext context) => appLocator.get<OauthBloc>(),
+      )
     ],
     child: MyApp(),
   ));
@@ -58,23 +73,23 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: [const Locale("id"), const Locale("en")],
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primaryColor: Color.fromRGBO(0, 206, 201, 1.0),
-        primaryColorLight: Color.fromRGBO(129, 236, 236,1.0)
-      ),
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primaryColor: Color.fromRGBO(0, 206, 201, 1.0),
+          primaryColorLight: Color.fromRGBO(129, 236, 236, 1.0)),
       routes: {
-        "/": (context) => LoginScreen(),
+        "login": (context) => LoginScreen(),
         "catalog": (context) => CatalogScreen(),
         "cart": (context) => CartScreen()
       },
+      initialRoute: "login",
     );
   }
 }

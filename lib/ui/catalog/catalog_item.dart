@@ -13,7 +13,16 @@ class CatalogItem extends StatelessWidget {
       padding: EdgeInsets.all(5),
       child: Row(
         children: <Widget>[
-          Expanded(flex: 1, child: Image.network("http://placehold.it/50/50")),
+          Container(
+            width: 100,
+            height: 100,
+            margin: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                    image: NetworkImage("http://placehold.it/100/100"),
+                    fit: BoxFit.fill)),
+          ),
           Expanded(
             flex: 2,
             child: Column(

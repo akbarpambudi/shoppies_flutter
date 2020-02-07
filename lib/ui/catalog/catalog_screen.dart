@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shoppies/bloc/auth/bloc.dart';
+import 'package:shoppies/bloc/catalog/bloc.dart';
+import 'package:shoppies/ui/catalog/catalog_empty_list.dart';
 import 'package:shoppies/ui/catalog/catalog_item.dart';
 
 class CatalogScreen extends StatefulWidget {
@@ -15,25 +17,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AuthenticationUnauthenticated) {
-          Navigator.of(context).pushNamed("/");
+          Navigator.of(context).pushReplacementNamed("login");
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.shopping_basket),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                BlocProvider.of<AuthenticationBloc>(context)
-                    .add(new SignedOut());
-              },
-            )
-          ],
-        ),
         body: _buildCatalogBody(theme, context),
       ),
     );
@@ -47,42 +34,73 @@ class _CatalogScreenState extends State<CatalogScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                MaterialButton(
+                  child: Text("Log out"),
+                  onPressed: () {
+                    BlocProvider.of<AuthenticationBloc>(context)
+                        .add(SignedOut());
+                  },
+                )
+              ],
+            ),
+          ),
           Flexible(
             flex: 1,
             fit: FlexFit.tight,
-            child: Center(
-              child: Text(
-                "Product Catalog",
-                style: theme.textTheme.display1
-                    .copyWith(color: theme.primaryColorLight),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Product Catalog",
+                  style: theme.textTheme.display1.copyWith(color: Colors.white),
+                ),
               ),
             ),
           ),
           Flexible(
             flex: 4,
             fit: FlexFit.tight,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.only(topLeft: Radius.circular(75.0)),
-                  color: Colors.white),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 40.0,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: ListView(
-                      children: <Widget>[
-                        _buildCatalogItem(context, "HHM-Cloth", "32.000,00"),
-                        _buildCatalogItem(context, "Baju Anak", "14.000,00"),
-                        _buildCatalogItem(context, "Baju Ibu", "15.000,00"),
-                        _buildCatalogItem(context, "Baju ku", "15.000,00")
-                      ],
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(75.0)),
+              child: Container(
+                decoration: BoxDecoration(color: Colors.white),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: BlocBuilder<CatalogBloc, CatalogState>(
+                        builder: (context, state) {
+                          if (state is CatalogLoading) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (state is CatalogLoadSuccess) {
+                            return ListView(
+                              children: state.catalogItems
+                                  .map<Widget>((catalog) => _buildCatalogItem(
+                                      context,
+                                      catalog.name,
+                                      catalog.price.toStringAsPrecision(2)))
+                                  .toList(),
+                            );
+                          }
+                          return CatalogEmptyList();
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           )

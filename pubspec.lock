@@ -233,6 +233,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_webview_plugin:
+    dependency: transitive
+    description:
+      name: flutter_webview_plugin
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.10+1"
   get_it:
     dependency: "direct main"
     description:
@@ -316,7 +323,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "2.4.0"
   logging:
     dependency: transitive
     description:
@@ -366,6 +373,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1+2"
+  oh_auth_2:
+    dependency: "direct main"
+    description:
+      name: oh_auth_2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3+1"
   package_config:
     dependency: transitive
     description:

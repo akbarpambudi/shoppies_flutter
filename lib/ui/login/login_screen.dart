@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shoppies/bloc/auth/authentication_bloc.dart';
 import 'package:shoppies/bloc/auth/bloc.dart';
+import 'package:shoppies/bloc/bloc/oauth_bloc.dart';
 import 'package:shoppies/bloc/login/bloc.dart';
 import 'package:shoppies/bloc/login/login_bloc.dart';
 import 'package:shoppies/ui/login/login_model.dart';
 import 'package:shoppies/ui/login/login_text_field.dart';
+
+import 'login_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -29,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hasError = false;
               errorMessage = null;
             });
-            Navigator.of(context).pushNamed("catalog");
+            Navigator.of(context).pushReplacementNamed("catalog");
           }
         }),
         BlocListener<LoginBloc, LoginState>(listener: (context, state) {
@@ -112,25 +115,27 @@ class _LoginScreenState extends State<LoginScreen> {
               }),
           errorDialog,
           SizedBox(height: 20.0),
-          _buildLoginButton(theme, context),
+          _buildLoginButton(context),
+          SizedBox(height: 20.0),
+          _buildLoginWithAmarbankButton(context),
         ],
       ),
     );
   }
 
-  Material _buildLoginButton(ThemeData theme, BuildContext context) {
-    return Material(
-        elevation: 5.0,
-        borderRadius: BorderRadius.circular(30.0),
-        color: theme.primaryColor,
-        child: MaterialButton(
-          minWidth: MediaQuery.of(context).size.width,
-          onPressed: () => _handleAuthentication(context),
-          child: Text(
-            "Sign in",
-            style: TextStyle(color: Colors.white),
-          ),
-        ));
+  Widget _buildLoginButton(BuildContext context) {
+    return LoginButton(
+      label: "Login",
+      onPress: () => _handleAuthentication(context),
+    );
+  }
+
+  Widget _buildLoginWithAmarbankButton(BuildContext context) {
+    return LoginButton(
+      label: "Login with amarbank",
+      style: LoginButtonStyle(buttonColor: Theme.of(context).primaryColorDark),
+      onPress: () => _handleAuthenticationOauth(context),
+    );
   }
 
   _handleAuthentication(BuildContext context) {
@@ -140,5 +145,10 @@ class _LoginScreenState extends State<LoginScreen> {
       loginBloc.add(new LoginFlowStarted(
           username: loginModel.username, password: loginModel.password));
     }
+  }
+
+  _handleAuthenticationOauth(BuildContext context) {
+    final OauthBloc loginBloc = BlocProvider.of<OauthBloc>(context);
+    loginBloc.add(new OauthStarted(context));
   }
 }
